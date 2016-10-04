@@ -28,7 +28,10 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var chatMessages = {results: []};
+
 var requestHandler = function(request, response) {
+  
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -47,19 +50,31 @@ var requestHandler = function(request, response) {
 
   // The outgoing status.
   var statusCode = 200;
-
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
+  var okResponse = response.writeHead(200, headers);
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
+  
 
-  if (request.url === '/classes/message' && request.method === 'GET') {
+  if (request.url === '/classes/messages' && request.method === 'GET') {
     response.writeHead(200, headers);
-    response.end();
+    response.end(JSON.stringify(chatMessages));
+  } else if (request.url === '/classes/messages' && request.method === 'POST') {
+    request.on('data', function(chunk) {
+      chatMessages.results.push(JSON.parse(chunk)); 
+    });
+    response.writeHead(201, headers);
+    //take their post and save it
+    // response.on('message', (chunk) => console.log("message", chunk));
+    response.end(JSON.stringify(chatMessages));
+  } else {
+    response.writeHead(404, headers);
+    response.end('there is nothing here!');
   }
 
   // .writeHead() writes to the request line and headers of the response,
