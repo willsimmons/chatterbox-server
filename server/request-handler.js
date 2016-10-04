@@ -62,9 +62,6 @@ var requestHandler = function(request, response) {
   
   var url = request.url.indexOf('?') !== -1 ? request.url.slice(0, request.url.indexOf('?')) : request.url;
   var queries = request.url.indexOf('?') !== -1 ? request.url.slice(request.url.indexOf('?') + 1) : '';
-  console.log('request.url: ' + request.url);
-  console.log('url: ' + url);
-  console.log('queries: ' + queries);
 
   if (url === '/classes/messages' && (request.method === 'GET' || request.method === 'OPTIONS')) {
     if (queries === 'order=-createdAt') {
@@ -93,7 +90,6 @@ var requestHandler = function(request, response) {
     response.writeHead(201, headers);
     response.end(JSON.stringify(chatMessages));
   } else {
-    console.log('in 404');
     response.writeHead(404, headers);
     response.end('there is nothing here!');
   }
