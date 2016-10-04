@@ -68,7 +68,7 @@ var requestHandler = function(request, response) {
       var orderedByDateChatMessages = {};
       
       orderedByDateChatMessages.results = chatMessages.results.sort(function(a, b) {
-        return b - a;
+        return b.createdAt - a.createdAt;
       });
       
       response.writeHead(200, headers);

@@ -1,6 +1,7 @@
 var handler = require('../request-handler');
 var expect = require('chai').expect;
 var stubs = require('./Stubs');
+var sinon = require('sinon');
 
 // Conditional async testing, akin to Jasmine's waitsFor()
 // Will wait for test to be truthy before executing callback
@@ -129,6 +130,49 @@ describe('Node Server Request Listener Function', function() {
     var messages = JSON.parse(res._data).results;
 
     expect(messages[0].objectId).to.not.equal(undefined);
+  });
+
+  it('Should return sorted messages by creatdAt when passed in a query of { order: "-createdAt" }', function() {
+    this.clock = sinon.useFakeTimers();
+
+    () => {
+      var stubMsg = {
+        username: 'Jono',
+        message: 'Do my bidding!'
+      };
+      var stubMsg2 = {
+        username: 'Mike',
+        message: 'Sorted!'
+      };
+
+
+      var req1 = new stubs.request('/classes/messages', 'POST', stubMsg);
+      var res1 = new stubs.response();
+
+      handler.requestHandler(req1, res1);
+      this.clock.tick(500);
+      this.clock.restore();
+      var req2 = new stubs.request('/classes/messages', 'POST', stubMsg2);
+      var res2 = new stubs.response();
+
+      handler.requestHandler(req2, res2);
+      this.clock.tick(500);
+      this.clock.restore();
+      var req3 = new stubs.request('/classes/messages?order=-createdAt', 'GET');
+      var res3 = new stubs.response();
+      handler.requestHandler(req3, res3);
+
+      var messages = JSON.parse(res3._data).results;
+    
+
+      expect(messages[4].username).to.equal('Mike');
+
+      this.clock.restore();
+    }();
+  });
+
+  it('Should return unsorted messages without a query specification', function() {
+    
   });
 
   it('Should 404 when asked for a nonexistent file', function() {
