@@ -82,6 +82,7 @@ var requestHandler = function(request, response) {
     request.on('data', function(chunk) {
       var data = JSON.parse(chunk);
       data.createdAt = Date.parse(new Date());
+      data.objectId = data.createdAt;
       chatMessages.results.push(data);
       console.log(chatMessages.results);
       console.log('inside the post on data');

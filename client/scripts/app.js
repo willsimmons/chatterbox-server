@@ -98,6 +98,7 @@ var app = {
   },
 
   renderMessages: function(messages, animate) {
+    console.log('renderMessages');
     // Clear existing messages`
     app.clearMessages();
     app.stopSpinner();
