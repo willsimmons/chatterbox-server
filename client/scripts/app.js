@@ -4,7 +4,7 @@ var app = {
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
   //to all messages sent by the user
   // server: 'https://api.parse.com/1/classes/messages/',
-  server: 'http://127.0.0.1:3000/',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -63,9 +63,11 @@ var app = {
       type: 'GET',
       data: { order: '-createdAt' },
       contentType: 'application/json',
+      // contentType: 'text/plain',
       success: function(data) {
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        console.log(data.results);
+        if (!data.results || !data.results.length) { app.stopSpinner(); return; }
 
         // Store messages for caching later
         app.messages = data.results;
@@ -226,12 +228,12 @@ var app = {
   },
 
   startSpinner: function() {
-    $('.spinner img').show();
-    $('form input[type=submit]').attr('disabled', 'true');
+    // $('.spinner img').show();
+    // $('form input[type=submit]').attr('disabled', 'true');
   },
 
   stopSpinner: function() {
-    $('.spinner img').fadeOut('fast');
-    $('form input[type=submit]').attr('disabled', null);
+    // $('.spinner img').fadeOut('fast');
+    // $('form input[type=submit]').attr('disabled', null);
   }
 };
