@@ -31,5 +31,8 @@
     "presets": [
       "es2015"
     ]
+  },
+  "dependencies": {
+    "bower": "^1.7.9"
   }
 }

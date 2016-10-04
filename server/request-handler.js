@@ -60,17 +60,26 @@ var requestHandler = function(request, response) {
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'application/json';
   
+  var url = request.url.slice(0, request.url.indexOf('?'));
+  var queries = request.url.slice(request.url.indexOf('?') + 1);
 
   if (request.url === '/classes/messages' && request.method === 'GET') {
-    response.writeHead(200, headers);
-    response.end(JSON.stringify(chatMessages));
+    if (queries === 'order=-createdAt') {
+      response.writeHead(200, headers);
+      var orderedByDateChatMessages = // finish this guy
+      response.end(JSON.stringify(chatMessages));
+    } else {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(chatMessages));
+    }
   } else if (request.url === '/classes/messages' && request.method === 'POST') {
     request.on('data', function(chunk) {
-      chatMessages.results.push(JSON.parse(chunk)); 
+      var data = JSON.parse(chunk);
+      data.createdAt = new Date();
+      chatMessages.results.push(data); 
     });
+
     response.writeHead(201, headers);
-    //take their post and save it
-    // response.on('message', (chunk) => console.log("message", chunk));
     response.end(JSON.stringify(chatMessages));
   } else {
     response.writeHead(404, headers);
