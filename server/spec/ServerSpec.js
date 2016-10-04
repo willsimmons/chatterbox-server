@@ -134,41 +134,32 @@ describe('Node Server Request Listener Function', function() {
 
   it('Should return sorted messages by creatdAt when passed in a query of { order: "-createdAt" }', function() {
     this.clock = sinon.useFakeTimers();
-
-    () => {
-      var stubMsg = {
-        username: 'Jono',
-        message: 'Do my bidding!'
-      };
-      var stubMsg2 = {
-        username: 'Mike',
-        message: 'Sorted!'
-      };
-
-
-      var req1 = new stubs.request('/classes/messages', 'POST', stubMsg);
-      var res1 = new stubs.response();
-
-      handler.requestHandler(req1, res1);
-      this.clock.tick(500);
-      this.clock.restore();
-      var req2 = new stubs.request('/classes/messages', 'POST', stubMsg2);
-      var res2 = new stubs.response();
-
-      handler.requestHandler(req2, res2);
-      this.clock.tick(500);
-      this.clock.restore();
-      var req3 = new stubs.request('/classes/messages?order=-createdAt', 'GET');
-      var res3 = new stubs.response();
-      handler.requestHandler(req3, res3);
-
-      var messages = JSON.parse(res3._data).results;
-    
-
-      expect(messages[4].username).to.equal('Mike');
-
-      this.clock.restore();
-    }();
+    var stubMsg = {
+      username: 'Jono',
+      message: 'Do my bidding!'
+    };
+    var stubMsg2 = {
+      username: 'Mike',
+      message: 'Sorted!'
+    };
+    var req1 = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res1 = new stubs.response();
+    handler.requestHandler(req1, res1);
+    this.clock.tick(500);
+    this.clock.restore();
+    var req2 = new stubs.request('/classes/messages', 'POST', stubMsg2);
+    var res2 = new stubs.response();
+    handler.requestHandler(req2, res2);
+    this.clock.tick(500);
+    this.clock.restore();
+    var req3 = new stubs.request('/classes/messages?order=-createdAt', 'GET');
+    var res3 = new stubs.response();
+    handler.requestHandler(req3, res3);
+    var messages = JSON.parse(res3._data).results;
+    expect(messages[4].username).to.equal('Mike');
+    this.clock.restore();
+    //this is not the proper usage, but we did get to reset the clock to check the sorting function
+    //an alternative would have been to manipulate the createdAt property manually
   });
 
   it('Should return unsorted messages without a query specification', function() {
