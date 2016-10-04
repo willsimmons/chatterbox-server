@@ -63,11 +63,17 @@ var requestHandler = function(request, response) {
   var url = request.url.slice(0, request.url.indexOf('?'));
   var queries = request.url.slice(request.url.indexOf('?') + 1);
 
-  if (request.url === '/classes/messages' && request.method === 'GET') {
+  if (url === '/classes/messages' && (request.method === 'GET' || request.method === 'OPTIONS')) {
+    console.log('in the get');
     if (queries === 'order=-createdAt') {
+      console.log('in the get and the order');
+      var orderedByDateChatMessages = {};
+      orderedByDateChatMessages.results = chatMessages.results.sort(function(a, b) {
+        return b - a;
+      });
+      console.log(orderedByDateChatMessages);
       response.writeHead(200, headers);
-      var orderedByDateChatMessages = // finish this guy
-      response.end(JSON.stringify(chatMessages));
+      response.end(JSON.stringify(orderedByDateChatMessages));
     } else {
       response.writeHead(200, headers);
       response.end(JSON.stringify(chatMessages));
@@ -75,14 +81,17 @@ var requestHandler = function(request, response) {
   } else if (request.url === '/classes/messages' && request.method === 'POST') {
     request.on('data', function(chunk) {
       var data = JSON.parse(chunk);
-      data.createdAt = new Date();
-      chatMessages.results.push(data); 
+      data.createdAt = Date.parse(new Date());
+      chatMessages.results.push(data);
+      console.log(chatMessages.results);
+      console.log('inside the post on data');
     });
 
     response.writeHead(201, headers);
     response.end(JSON.stringify(chatMessages));
   } else {
     response.writeHead(404, headers);
+    console.log('in the 404');
     response.end('there is nothing here!');
   }
 
